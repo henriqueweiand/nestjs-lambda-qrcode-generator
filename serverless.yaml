@@ -1,5 +1,6 @@
+org: henriqueweiand
+app: nestjs-lambda-qrcode-generator
 service: lambda-s3
-frameworkVersion: '4'
 
 useDotenv: true
 
@@ -10,8 +11,6 @@ plugins:
 custom:
   s3:
     host: localhost
-    # port: 8000
-    # directory: /tmp
 
 provider:
   name: aws
@@ -23,7 +22,7 @@ resources:
     NewResource:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: qr-code-bucket
+        BucketName: qr-codes
 
 functions:
   main:

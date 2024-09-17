@@ -1,38 +1,57 @@
 import * as AWS from '@aws-sdk/client-s3';
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class S3Service {
     private s3: AWS.S3;
 
-    constructor() {
+    constructor(
+        private readonly configService: ConfigService,
+    ) {
         this.s3 = new AWS.S3({
             forcePathStyle: true,
             credentials: {
-                accessKeyId: "S3RVER", // This specific key is required when working offline
-                secretAccessKey: "S3RVER",
+                accessKeyId: configService.getOrThrow('accessKeyId'),
+                secretAccessKey: configService.getOrThrow('secretAccessKey'),
             },
-            endpoint: "http://localhost:4569",
+            endpoint: configService.getOrThrow('endpoint'),
         });
     }
 
-    async uploadFile(key: string, body: Buffer | string, mimeType: string): Promise<any> {
+    async uploadFile(key: string, body: Buffer | string, mimeType: string, folder?: string): Promise<any> {
+        const fullKey = folder ? `${folder}/${key}` : key;
+
         const params = {
-            Bucket: 'qr-code-bucket', // Nome do bucket emulado
-            Key: key,
+            Bucket: this.configService.getOrThrow('bucket'),
+            Key: fullKey,
             Body: body,
             ContentType: mimeType,
             ACL: 'public-read' as AWS.ObjectCannedACL,
         };
 
-        await this.s3.send(
-            new AWS.PutObjectCommand(params)
-        );
+        console.info('uploadFile:', {
+            bucket: params.Bucket,
+            key: params.Key,
+            ContentType: params.ContentType
+        });
 
-        return this.getPublicUrl(key);
+        try {
+            await this.s3.send(
+                new AWS.PutObjectCommand(params)
+            );
+        } catch (e) {
+            console.error('Error uploading file:', e);
+            throw e;
+        }
+
+        return this._getPublicUrl(fullKey);
     }
 
-    getPublicUrl(key: string): string {
-        return `http://localhost:4569/qr-code-bucket/${key}`;
+    private _getPublicUrl(key: string): string {
+        const url = `${this.configService.getOrThrow('endpoint')}/${this.configService.getOrThrow('bucket')}/${key}`;
+
+        console.info('getPublicUrl:', url);
+        return url;
     }
 }

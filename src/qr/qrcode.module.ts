@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { S3Service } from './s3.service';
-import { QRCodeService } from './qrcode.service';
 import { QRController } from './qrcode.controller';
+import { QRCodeService } from './qrcode.service';
+import { S3Service } from './s3.service';
 
 @Module({
-  imports: [],
   controllers: [QRController],
   providers: [S3Service, QRCodeService],
 })

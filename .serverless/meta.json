@@ -1,0 +1,106 @@
+{
+  "/Users/henriqueweiand/Documents/git/henrique/nest/nestjs-lambda-s3": {
+    "versionSfCore": null,
+    "versionFramework": "4.3.3",
+    "isWithinCompose": false,
+    "isCompose": false,
+    "composeOrgName": null,
+    "composeResolverProviders": {
+      "default-aws-credential-resolver": "<REDACTED>"
+    },
+    "composeServiceName": null,
+    "servicePath": "/Users/henriqueweiand/Documents/git/henrique/nest/nestjs-lambda-s3",
+    "serviceConfigFileName": "serverless.yaml",
+    "service": {
+      "service": "lambda-s3",
+      "frameworkVersion": "4",
+      "useDotenv": true,
+      "plugins": [
+        "serverless-offline-s3",
+        "serverless-offline"
+      ],
+      "custom": {
+        "serverless-offline-s3": {
+          "endpoint": "http://localhost:9000",
+          "region": "us-east-1",
+          "accessKey": "<REDACTED>",
+          "secretKey": "<REDACTED>"
+        }
+      },
+      "provider": {
+        "name": "aws",
+        "runtime": "nodejs20.x",
+        "region": "us-east-1",
+        "stage": "dev",
+        "versionFunctions": true
+      },
+      "functions": {
+        "main": {
+          "handler": "dist/serverless.handler",
+          "events": [
+            {
+              "http": {
+                "method": "ANY",
+                "path": "/"
+              }
+            },
+            {
+              "http": {
+                "method": "ANY",
+                "path": "{proxy+}"
+              }
+            },
+            {
+              "s3": {
+                "bucket": "qr-code-bucket",
+                "event": "s3:ObjectCreated:Put"
+              }
+            }
+          ],
+          "name": "lambda-s3-dev-main"
+        }
+      }
+    },
+    "serviceRawFile": "service: lambda-s3\nframeworkVersion: '4'\n\nuseDotenv: true\n\nplugins:\n  - serverless-offline-s3\n  - serverless-offline\n\ncustom:\n  serverless-offline-s3:\n    endpoint: http://localhost:9000\n    region: us-east-1\n    accessKey: test\n    secretKey: test\n\nprovider:\n  name: aws\n  runtime: nodejs20.x\n  region: us-east-1\n\nfunctions:\n  main:\n    handler: dist/serverless.handler\n    events:\n      - http:\n          method: ANY\n          path: /\n      - http:\n          method: ANY\n          path: '{proxy+}'\n      - s3:\n          bucket: qr-code-bucket\n          event: s3:ObjectCreated:Put\n",
+    "command": [
+      "offline"
+    ],
+    "options": {
+      "debug": "*"
+    },
+    "error": {
+      "message": "",
+      "stack": "AggregateError [ECONNREFUSED]: \n    at internalConnectMultiple (node:net:1117:18)\n    at afterConnectMultiple (node:net:1684:7)",
+      "code": "ECONNREFUSED"
+    },
+    "params": {},
+    "machineId": "71ea164a9879cd031059f20834f4729b",
+    "stage": "dev",
+    "accessKeyV2": "<REDACTED>",
+    "accessKeyV1": "<REDACTED>",
+    "orgId": "yfsfTVSGPnzV84cGPZ",
+    "orgName": "henriqueweiand",
+    "userId": "N0hFssq8jdPZJfJZ4y",
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "userName": "henriqueweiand",
+    "subscription": null,
+    "userEmail": "henriqueweiand@gmail.com",
+    "projectType": "traditional",
+    "versionSf": "4.3.3",
+    "serviceProviderAwsCfStackName": "lambda-s3-dev",
+    "serviceUniqueId": null,
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
+  }
+}

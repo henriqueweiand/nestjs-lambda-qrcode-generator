@@ -1,0 +1,37 @@
+service: lambda-s3
+frameworkVersion: '4'
+
+useDotenv: true
+
+plugins:
+  - serverless-s3-local
+  - serverless-offline
+
+custom:
+  s3:
+    host: localhost
+    # port: 8000
+    # directory: /tmp
+
+provider:
+  name: aws
+  runtime: nodejs20.x
+  region: us-east-1
+
+resources:
+  Resources:
+    NewResource:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: qr-code-bucket
+
+functions:
+  main:
+    handler: dist/serverless.handler
+    events:
+      - http:
+          method: ANY
+          path: /
+      - http:
+          method: ANY
+          path: '{proxy+}'

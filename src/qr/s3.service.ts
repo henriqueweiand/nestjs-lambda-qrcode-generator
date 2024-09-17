@@ -5,17 +5,18 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class S3Service {
     private s3: AWS.S3;
+    private isProduction: boolean = false;
 
     constructor(
         private readonly configService: ConfigService,
     ) {
-        const isProduction = process.env.NODE_ENV === 'production';
+        this.isProduction = process.env.NODE_ENV === 'production';
 
         const s3Config: AWS.S3ClientConfig = {
             forcePathStyle: true,
         };
 
-        if (!isProduction) {
+        if (!this.isProduction) {
             s3Config.credentials = {
                 accessKeyId: configService.getOrThrow('accessKeyId'),
                 secretAccessKey: configService.getOrThrow('secretAccessKey'),
@@ -26,7 +27,7 @@ export class S3Service {
         this.s3 = new AWS.S3(s3Config);
     }
 
-    async uploadFile(key: string, body: Buffer | string, mimeType: string, folder?: string): Promise<any> {
+    async uploadFile(key: string, body: Buffer | string, mimeType: string, folder?: string): Promise<string> {
         const fullKey = folder ? `${folder}/${key}` : key;
 
         const params = {
@@ -56,10 +57,9 @@ export class S3Service {
     }
 
     private _getPublicUrl(key: string): string {
-        const isProduction = process.env.NODE_ENV === 'production';
         let url: string;
 
-        if (isProduction) {
+        if (this.isProduction) {
             url = `https://${this.configService.getOrThrow('bucket')}.s3.amazonaws.com/${key}`;
         } else {
             url = `${this.configService.getOrThrow('endpoint')}/${this.configService.getOrThrow('bucket')}/${key}`;

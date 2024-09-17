@@ -14,11 +14,16 @@ async function bootstrap() {
     return serverlessExpress({ app: expressApp });
 }
 
+// Initialize the server once and cache it
+const initializeServer = bootstrap().then((initializedServer) => {
+    server = initializedServer;
+});
+
 export const handler: Handler = async (
     event: any,
     context: Context,
     callback: Callback,
 ) => {
-    server = server ?? (await bootstrap());
+    await initializeServer;
     return server(event, context, callback);
 };

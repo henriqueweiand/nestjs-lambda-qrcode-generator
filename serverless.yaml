@@ -32,12 +32,12 @@ provider:
     bucket: ${env:bucket}
     NODE_ENV: ${env:NODE_ENV}
 
-resources:
-  Resources:
-    NewResource:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: qr-codes # if you change the env, change here too
+# resources:
+#   Resources:
+#     NewResource:
+#       Type: AWS::S3::Bucket
+#       Properties:
+#         BucketName: ${env:bucket}
 
 functions:
   main:

@@ -3,7 +3,7 @@ import * as QRCode from 'qr-image';
 
 @Injectable()
 export class QRCodeService {
-    generateQRCode(text: string): Buffer | string {
+    generateQRCode(text: string) {
         console.info('generateQRCode:', text);
 
         try {

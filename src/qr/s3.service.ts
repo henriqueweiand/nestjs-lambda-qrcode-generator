@@ -10,7 +10,7 @@ export class S3Service {
     constructor(
         private readonly configService: ConfigService,
     ) {
-        this.isProduction = process.env.NODE_ENV === 'production';
+        this.isProduction = configService.getOrThrow('NODE_ENV') === 'production';
 
         const s3Config: AWS.S3ClientConfig = {
             forcePathStyle: true,
@@ -27,7 +27,7 @@ export class S3Service {
         this.s3 = new AWS.S3(s3Config);
     }
 
-    async uploadFile(key: string, body: Buffer | string, mimeType: string, folder?: string): Promise<string> {
+    async uploadFile(key: string, body: any, mimeType: string, folder?: string): Promise<string> {
         const fullKey = folder ? `${folder}/${key}` : key;
 
         const params = {

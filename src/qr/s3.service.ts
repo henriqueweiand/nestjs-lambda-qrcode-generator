@@ -9,14 +9,21 @@ export class S3Service {
     constructor(
         private readonly configService: ConfigService,
     ) {
-        this.s3 = new AWS.S3({
+        const isProduction = process.env.NODE_ENV === 'production';
+
+        const s3Config: AWS.S3ClientConfig = {
             forcePathStyle: true,
-            credentials: {
+        };
+
+        if (!isProduction) {
+            s3Config.credentials = {
                 accessKeyId: configService.getOrThrow('accessKeyId'),
                 secretAccessKey: configService.getOrThrow('secretAccessKey'),
-            },
-            endpoint: configService.getOrThrow('endpoint'),
-        });
+            };
+            s3Config.endpoint = configService.getOrThrow('endpoint');
+        }
+
+        this.s3 = new AWS.S3(s3Config);
     }
 
     async uploadFile(key: string, body: Buffer | string, mimeType: string, folder?: string): Promise<any> {
@@ -49,7 +56,14 @@ export class S3Service {
     }
 
     private _getPublicUrl(key: string): string {
-        const url = `${this.configService.getOrThrow('endpoint')}/${this.configService.getOrThrow('bucket')}/${key}`;
+        const isProduction = process.env.NODE_ENV === 'production';
+        let url: string;
+
+        if (isProduction) {
+            url = `https://${this.configService.getOrThrow('bucket')}.s3.amazonaws.com/${key}`;
+        } else {
+            url = `${this.configService.getOrThrow('endpoint')}/${this.configService.getOrThrow('bucket')}/${key}`;
+        }
 
         console.info('getPublicUrl:', url);
         return url;

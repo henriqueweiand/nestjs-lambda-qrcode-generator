@@ -16,13 +16,28 @@ provider:
   name: aws
   runtime: nodejs20.x
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:ListBucket
+        - s3:GetObject
+        - s3:PutObject
+      Resource:
+        - arn:aws:s3:::qr-codes
+        - arn:aws:s3:::qr-codes/*
+  environment:
+    accessKeyId: ${env:accessKeyId}
+    secretAccessKey: ${env:secretAccessKey}
+    endpoint: ${env:endpoint}
+    bucket: ${env:bucket}
+    NODE_ENV: ${env:NODE_ENV}
 
 resources:
   Resources:
     NewResource:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: qr-codes
+        BucketName: qr-codes # if you change the env, change here too
 
 functions:
   main:
